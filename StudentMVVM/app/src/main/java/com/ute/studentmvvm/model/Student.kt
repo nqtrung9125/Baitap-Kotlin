@@ -1,10 +1,12 @@
 package com.ute.studentmvvm.model
-
+import androidx.room.Index
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
-@Entity(tableName = "students_table")
+@Entity(
+    tableName = "students_table",
+    indices = [Index(value = ["student_code"], unique = true)]
+)
 data class Student(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

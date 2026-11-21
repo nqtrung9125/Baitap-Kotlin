@@ -5,9 +5,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StudentDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertStudent(student: Student): Long
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(students: List<Student>)
 
