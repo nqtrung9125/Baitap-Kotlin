@@ -1,6 +1,6 @@
 
 package com.ute.studentmvvm.ui
-
+import android.util.Patterns
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -32,41 +32,42 @@ class AddStudentDialogFragment : DialogFragment() {
             .setPositiveButton("Lưu", null)
             .setNegativeButton("Hủy", null)
             .create()
-
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val name = binding.etFullName.text.toString().trim()
                 val code = binding.etStudentCode.text.toString().trim()
                 val email = binding.etEmail.text.toString().trim()
                 val gpa = binding.etGpa.text.toString().toDoubleOrNull()
-
+                var isValid = true
                 if (name.isEmpty()) {
-                    binding.etFullName.error = "Nhập họ tên"
-                    return@setOnClickListener
+                    binding.etFullName.error = "Vui lòng nhập họ tên"
+                    isValid = false
                 }
-
-                if (code.isEmpty()) {
-                    binding.etStudentCode.error = "Nhập MSSV"
-                    return@setOnClickListener
+                if (!code.matches(Regex("\\d{13}"))) {
+                    binding.etStudentCode.error = "MSSV phải gồm 13 chữ số"
+                    isValid = false
+                }
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    binding.etEmail.error = "Email không hợp lệ"
+                    isValid = false
                 }
 
                 if (gpa == null || gpa !in 0.0..4.0) {
                     binding.etGpa.error = "GPA phải từ 0 đến 4"
-                    return@setOnClickListener
+                    isValid = false
                 }
-
+                if (!isValid) return@setOnClickListener
                 viewModel.insert(
                     Student(
                         fullName = name,
                         studentCode = code,
                         email = email,
-                        gpa = gpa
+                        gpa = gpa ?: return@setOnClickListener
                     )
                 )
                 dialog.dismiss()
             }
         }
-
         return dialog
     }
 }
